@@ -400,6 +400,11 @@ func usageSemanticFromUsage(relayInfo *relaycommon.RelayInfo, usage *dto.Usage) 
 func PostTextConsumeQuota(ctx *gin.Context, relayInfo *relaycommon.RelayInfo, usage *dto.Usage, extraContent []*common.Message) {
 	originUsage := usage
 	billingUsage := effectiveBillingUsage(usage)
+	// meteorite: bill the reported tokens less the upstream's injection (D-063).
+	billingUsage, deduction := meteoriteAdjustUsage(relayInfo, billingUsage)
+	if deduction != nil {
+		extraContent = append(extraContent, deduction)
+	}
 	if usage == nil {
 		extraContent = append(extraContent, common.NewMessage("Upstream returned no usage"))
 	}

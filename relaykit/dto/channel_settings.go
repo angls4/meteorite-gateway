@@ -39,6 +39,9 @@ type ChannelSettings struct {
 	// RequestPlugins lists the request plugin instances the channel binds,
 	// by instance id, in run order.
 	RequestPlugins []string `json:"request_plugins,omitempty"`
+	// meteorite: the average tokens this upstream model injects into every prompt, set by the
+	// verification backend and subtracted from the billed input tokens (D-063).
+	MeteoriteInjectionTokens int `json:"meteorite_injection_tokens,omitempty"`
 }
 
 // BindsTaskPlugin reports whether the channel is bound to the task plugin,

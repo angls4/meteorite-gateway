@@ -9,4 +9,7 @@ This is the meteorite fork of [QuantumNous/new-api](https://github.com/QuantumNo
 
 ## Changes from upstream
 
-None yet.
+- `service/meteorite_billing.go`, `setting/meteorite_price.go`: input tokens are billed as reported minus the channel's average injection (never below 10, never above the reported count; D-063), and the price is a percentage of the official price per model, 50% by default (R-013). Option `MeteoritePricePercent`, for example `{"claude-sonnet-5-5": 60}`.
+- `relaykit/dto/channel_settings.go`: field `meteorite_injection_tokens`, written by the verification backend.
+- `service/text_quota.go`, `relay/helper/price.go`, `model/option.go`: one `meteorite:` hook each.
+- `controller/relay.go`: a request refused for lack of balance answers 402.

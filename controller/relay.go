@@ -114,6 +114,8 @@ func Relay(c *gin.Context, relayFormat types.RelayFormat) {
 			if relayFormat != types.RelayFormatOpenAIRealtime {
 				c.Header("Content-Type", "application/json; charset=utf-8")
 			}
+			// meteorite: a request refused for lack of balance answers 402.
+			newAPIError.StatusCode = service.MeteoriteRelayErrorStatus(newAPIError)
 			switch relayFormat {
 			case types.RelayFormatOpenAIRealtime:
 				helper.WssError(c, ws, newAPIError.ToOpenAIError(upstreamURLs...))

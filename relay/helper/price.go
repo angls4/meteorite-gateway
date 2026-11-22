@@ -15,6 +15,7 @@ import (
 	"github.com/QuantumNous/new-api/relaykit/dto"
 	"github.com/QuantumNous/new-api/relaykit/relayconvert/reasoning"
 	"github.com/QuantumNous/new-api/relaykit/types"
+	"github.com/QuantumNous/new-api/setting"
 	"github.com/QuantumNous/new-api/setting/billing_setting"
 	"github.com/QuantumNous/new-api/setting/model_setting"
 	"github.com/QuantumNous/new-api/setting/operation_setting"
@@ -108,6 +109,8 @@ func ModelPriceHelper(c *gin.Context, info *relaycommon.RelayInfo, promptTokens 
 				return hosttypes.PriceData{}, modelPriceNotConfiguredError(c, matchName, info.UserId)
 			}
 		}
+		// meteorite: the user pays a percentage of the official price (R-013).
+		modelRatio *= setting.MeteoritePriceFactor(billingModelName)
 		completionRatio = ratio_setting.GetCompletionRatio(billingModelName)
 		cacheRatio, _ = ratio_setting.GetCacheRatio(billingModelName)
 		cacheCreationRatio, _ = ratio_setting.GetCreateCacheRatio(billingModelName)
@@ -128,6 +131,7 @@ func ModelPriceHelper(c *gin.Context, info *relaycommon.RelayInfo, promptTokens 
 			info.ImageQuotaBeforeGroup = preConsumedTokens * modelRatio
 		}
 	} else {
+		modelPrice *= setting.MeteoritePriceFactor(billingModelName) // meteorite: R-013
 		if meta.ImagePriceRatio != 0 {
 			modelPrice = modelPrice * meta.ImagePriceRatio
 		}
