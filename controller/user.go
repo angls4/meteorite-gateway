@@ -78,12 +78,20 @@ func Login(c *gin.Context) {
 		common.ApiErrorT(c, "Invalid parameters")
 		return
 	}
+	// meteorite: five failed sign-ins block the account from this address for 15 minutes (R-023).
+	if service.MeteoriteLoginBlocked(username, c.ClientIP()) {
+		common.ApiErrorStatus(c, http.StatusTooManyRequests, common.NewMessage("Too many failed sign-in attempts. Try again in 15 minutes."))
+		return
+	}
 	user := model.User{
 		Username: username,
 		Password: password,
 	}
 	err = user.ValidateAndFill()
 	if err != nil {
+		if !errors.Is(err, model.ErrDatabase) && !errors.Is(err, model.ErrUserEmptyCredentials) {
+			service.MeteoriteLoginFailed(username, c.ClientIP()) // meteorite: R-023
+		}
 		switch {
 		case errors.Is(err, model.ErrDatabase):
 			common.SysLog(common.LogText("Login database error for user %s: %v", username, err))
@@ -96,6 +104,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	service.MeteoriteLoginSucceeded(username, c.ClientIP()) // meteorite: R-023
 	setupLogin(&user, nil, c)
 }
 

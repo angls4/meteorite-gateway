@@ -225,6 +225,9 @@ func InitDB() (err error) {
 		}
 		common.SysLog(common.LogText("database migration started"))
 		err = migrateDB()
+		if err == nil {
+			err = MeteoriteSealStoredKeys() // meteorite: no key stays in plain text
+		}
 		return err
 	} else {
 		common.FatalLog(err)

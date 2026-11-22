@@ -291,7 +291,11 @@ func GetTokenByKey(key string, fromDB bool) (token *Token, err error) {
 		// Don't return error - fall through to DB
 	}
 	token = &Token{}
-	if err = DB.Where(commonKeyCol+" = ?", key).First(token).Error; err != nil {
+	sealedKey, sealErr := MeteoriteSeal(key) // meteorite: keys are stored sealed
+	if sealErr != nil {
+		return nil, sealErr
+	}
+	if err = DB.Where(commonKeyCol+" = ?", sealedKey).First(token).Error; err != nil {
 		return nil, err
 	}
 	if common.RedisEnabled {
