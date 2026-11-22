@@ -13,3 +13,4 @@ This is the meteorite fork of [QuantumNous/new-api](https://github.com/QuantumNo
 - `relaykit/dto/channel_settings.go`: field `meteorite_injection_tokens`, written by the verification backend.
 - `service/text_quota.go`, `relay/helper/price.go`, `model/option.go`: one `meteorite:` hook each.
 - `controller/relay.go`: a request refused for lack of balance answers 402.
+- `model/meteorite_cooldown.go`: a channel that failed a user request rests for 60 seconds, in both channel selection paths (R-015); hooked from `controller/relay.go`. Retries and the ban switch are settings (`RetryTimes` 2, automatic disable off), applied by `scripts/gateway_bootstrap.py`.

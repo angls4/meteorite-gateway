@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/model"
 	relaycommon "github.com/QuantumNous/new-api/relay/common"
 	"github.com/QuantumNous/new-api/relaykit/dto"
 	"github.com/QuantumNous/new-api/relaykit/types"
@@ -51,4 +52,18 @@ func MeteoriteRelayErrorStatus(err *types.NewAPIError) int {
 		return 402
 	}
 	return err.StatusCode
+}
+
+// MeteoriteCoolDownOnUpstreamFailure rests the channel for 60 seconds when an upstream error
+// (a transport failure, a timeout, HTTP 5xx, 408 or 429) failed the request. A request the user
+// got wrong (other 4xx) or a local rejection does not count against the channel.
+func MeteoriteCoolDownOnUpstreamFailure(channelId int, err *types.NewAPIError) {
+	if err == nil || channelId <= 0 {
+		return
+	}
+	failedUpstream := err.GetErrorType() != types.ErrorTypeNewAPIError &&
+		(err.StatusCode >= 500 || err.StatusCode == 408 || err.StatusCode == 429)
+	if types.IsChannelError(err) || err.GetErrorCode() == types.ErrorCodeDoRequestFailed || failedUpstream {
+		model.MeteoriteCoolDownChannel(channelId)
+	}
 }

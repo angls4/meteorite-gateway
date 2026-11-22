@@ -136,11 +136,13 @@ func GetRandomSatisfiedChannel(
 
 	// First, try to find channels with the exact model name.
 	channels, _ := filterCandidateIDs(group2model2channels[group][model], model, filters)
+	channels = meteoriteDropCooledDownIDs(channels) // meteorite: R-015
 
 	// If no channels found, try to find channels with the normalized model name.
 	if len(channels) == 0 {
 		normalizedModel := ratio_setting.RoutingMatchModelName(model)
 		channels, _ = filterCandidateIDs(group2model2channels[group][normalizedModel], model, filters)
+		channels = meteoriteDropCooledDownIDs(channels) // meteorite: R-015
 	}
 
 	if len(channels) == 0 {

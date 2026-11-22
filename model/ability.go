@@ -116,7 +116,7 @@ func GetChannel(
 	if err != nil {
 		return nil, err
 	}
-	abilities = filterAbilitiesByConstraints(abilities, model, filters)
+	abilities = meteoriteDropCooledDownAbilities(filterAbilitiesByConstraints(abilities, model, filters)) // meteorite: R-015
 	// Like the memory cache, retry with the routing name (for example without
 	// @ modifiers) when no channel serves the exact name.
 	if normalized := ratio_setting.RoutingMatchModelName(model); len(abilities) == 0 && normalized != "" && normalized != model {
@@ -124,7 +124,7 @@ func GetChannel(
 		if err != nil {
 			return nil, err
 		}
-		abilities = filterAbilitiesByConstraints(abilities, model, filters)
+		abilities = meteoriteDropCooledDownAbilities(filterAbilitiesByConstraints(abilities, model, filters)) // meteorite: R-015
 	}
 	if len(abilities) > 0 {
 		priorities := make([]int64, 0)
