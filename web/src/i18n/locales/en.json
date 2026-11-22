@@ -7753,5 +7753,7 @@
     "By creating an account, you agree to our": "By creating an account, you agree to our"
   },
   "Test top-up adds balance without a payment. It is for development only.": "Test top-up adds balance without a payment. It is for development only.",
-  "Add test balance": "Add test balance"
+  "Add test balance": "Add test balance",
+  "Download your account data: keys (masked), request metadata of the last 90 days and balance transactions.": "Download your account data: keys (masked), request metadata of the last 90 days and balance transactions.",
+  "Download my data": "Download my data"
 }
